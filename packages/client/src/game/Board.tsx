@@ -2,20 +2,33 @@ import type { Board as BoardModel } from '@rps/engine';
 import type { LegalPlay } from '@rps/engine';
 import { Card } from './Card';
 
+export interface BoardEffect {
+  id: string;
+  row: number;
+  col: number;
+  kind: 'place' | 'lock' | 'trash';
+}
+
 export function Board({
   board,
   legalMoves,
+  effects,
   onPlay,
 }: {
   board: BoardModel;
   legalMoves: LegalPlay[];
+  effects: BoardEffect[];
   onPlay: (row: number, col: number) => void;
 }) {
   const size = board.length;
   const legalAt = (row: number, col: number) => legalMoves.find((m) => m.row === row && m.col === col);
+  const effectAt = (row: number, col: number) => effects.filter((e) => e.row === row && e.col === col);
 
   return (
-    <div className="board" style={{ gridTemplateColumns: `repeat(${size}, auto)` }}>
+    <div
+      className="board"
+      style={{ gridTemplateColumns: `repeat(${size}, auto)`, ['--board-size' as string]: size }}
+    >
       {board.map((row, r) =>
         row.map((space, c) => {
           const legal = legalAt(r, c);
@@ -35,6 +48,9 @@ export function Board({
                   ))}
                 </div>
               )}
+              {effectAt(r, c).map((e) => (
+                <div key={e.id} className={`fx fx-${e.kind}`} />
+              ))}
             </div>
           );
         }),

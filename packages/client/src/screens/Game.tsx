@@ -1,14 +1,18 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { Move } from '@rps/engine';
 import { request } from '../socket';
 import type { GameViewPayload, RoomView, SimpleAck } from '../protocol';
 import { legalMovesFor } from '../game/legalMoves';
-import { Board } from '../game/Board';
+import { Board, type BoardEffect } from '../game/Board';
 import { Hand } from '../game/Hand';
 import { TurnBanner } from '../game/TurnBanner';
 import { DrawPiles } from '../game/DrawPiles';
 import { PlayersBar } from '../game/PlayersBar';
 import { EndOverlay } from '../game/EndOverlay';
+import { SoundToggle } from '../game/SoundToggle';
+import { sound } from '../sound';
+
+const EFFECT_DURATION_MS = 700;
 
 export function Game({
   game,
@@ -23,7 +27,35 @@ export function Game({
 }) {
   const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [effects, setEffects] = useState<BoardEffect[]>([]);
   const { view, turnDeadline } = game;
+  // Don't animate/replay the whole history on mount (e.g. reconnecting mid-game) -
+  // only entries that arrive after we're already watching.
+  const seenLogLength = useRef(view.log.length);
+
+  useEffect(() => {
+    if (view.log.length <= seenLogLength.current) return;
+    const newEntries = view.log.slice(seenLogLength.current);
+    seenLogLength.current = view.log.length;
+
+    const added: BoardEffect[] = [];
+    for (const entry of newEntries) {
+      if (entry.type === 'place') {
+        added.push({ id: `${Date.now()}-${Math.random()}`, row: entry.row, col: entry.col, kind: entry.locked ? 'lock' : 'place' });
+        entry.locked ? sound.lock() : sound.place();
+      } else if (entry.type === 'trash') {
+        added.push({ id: `${Date.now()}-${Math.random()}`, row: entry.row, col: entry.col, kind: 'trash' });
+        sound.bomb();
+      } else if (entry.type === 'end') {
+        entry.winner ? sound.win() : sound.draw();
+      }
+    }
+    if (added.length === 0) return;
+    setEffects((prev) => [...prev, ...added]);
+    const ids = added.map((e) => e.id);
+    setTimeout(() => setEffects((prev) => prev.filter((e) => !ids.includes(e.id))), EFFECT_DURATION_MS);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [view.log.length]);
 
   const allLegal = legalMovesFor(view);
   const legalForSelected = selectedCardId ? allLegal.filter((m) => m.cardId === selectedCardId) : [];
@@ -57,13 +89,14 @@ export function Game({
 
   return (
     <div className="game-screen">
-      <div className="turn-banner" style={{ background: 'transparent', border: 'none', padding: 0 }}>
-        Room {roomCode}
+      <div className="screen-header">
+        <span>Room {roomCode}</span>
+        <SoundToggle />
       </div>
       <PlayersBar view={view} room={room} />
       <TurnBanner view={view} turnDeadline={turnDeadline} />
       <DrawPiles counts={view.drawPileCounts} />
-      <Board board={view.board} legalMoves={legalForSelected} onPlay={playMove} />
+      <Board board={view.board} legalMoves={legalForSelected} effects={effects} onPlay={playMove} />
       <Hand
         hand={view.you.hand}
         selectedCardId={selectedCardId}

@@ -92,6 +92,18 @@ button.secondary {
   min-height: 1.2em;
 }
 
+.screen-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 4px;
+}
+
+.screen-header h1 {
+  margin: 0;
+}
+
 .tabs {
   display: flex;
   gap: 8px;
@@ -264,7 +276,7 @@ button.secondary {
 
 .space {
   aspect-ratio: 1;
-  width: 56px;
+  width: min(56px, calc((100vw - 64px) / var(--board-size, 8)));
   border-radius: 6px;
   background: var(--panel);
   border: 2px solid transparent;
@@ -273,6 +285,7 @@ button.secondary {
   justify-content: center;
   position: relative;
   cursor: default;
+  overflow: hidden;
 }
 
 .space.legal {
@@ -307,8 +320,8 @@ button.secondary {
 .space .stack-peek .chip.team-green { background: var(--team-green); }
 
 .card {
-  width: 40px;
-  height: 40px;
+  width: 70%;
+  height: 70%;
   border-radius: 6px;
   display: flex;
   align-items: center;
@@ -328,7 +341,10 @@ button.secondary {
   border: 2px solid transparent;
   width: 52px;
   height: 52px;
+  min-width: 44px;
+  min-height: 44px;
   font-size: 1.3em;
+  flex-shrink: 0;
 }
 
 .card.hand-card.selected {
@@ -374,4 +390,139 @@ button.secondary {
   background: var(--panel-2);
   border-radius: 8px;
   padding: 8px 12px;
+}
+
+.sound-toggle {
+  padding: 6px 10px;
+  font-size: 1.1em;
+  line-height: 1;
+}
+
+.tutorial {
+  max-width: 480px;
+  text-align: left;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.tutorial-body {
+  color: var(--muted);
+  font-size: 0.9em;
+  line-height: 1.5;
+}
+
+.tutorial-body ul {
+  padding-left: 18px;
+  margin: 8px 0;
+}
+
+.tutorial-body li {
+  margin-bottom: 8px;
+}
+
+.tutorial-body strong {
+  color: var(--text);
+}
+
+/* ---- Animations ---- */
+
+.fx {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: 6px;
+}
+
+.fx-place {
+  animation: fx-pop 0.35s ease-out;
+}
+
+.fx-lock {
+  border: 3px solid var(--accent);
+  animation: fx-ring 0.6s ease-out;
+}
+
+.fx-trash {
+  background: radial-gradient(circle, rgba(229, 72, 77, 0.85) 0%, rgba(229, 72, 77, 0) 70%);
+  animation: fx-burst 0.6s ease-out;
+}
+
+@keyframes fx-pop {
+  from {
+    box-shadow: 0 0 0 8px rgba(245, 196, 81, 0.5);
+  }
+  to {
+    box-shadow: 0 0 0 0 rgba(245, 196, 81, 0);
+  }
+}
+
+@keyframes fx-ring {
+  from {
+    opacity: 1;
+    transform: scale(0.7);
+  }
+  to {
+    opacity: 0;
+    transform: scale(1.15);
+  }
+}
+
+@keyframes fx-burst {
+  from {
+    opacity: 1;
+    transform: scale(0.5);
+  }
+  to {
+    opacity: 0;
+    transform: scale(1.6);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fx-place,
+  .fx-lock,
+  .fx-trash {
+    animation: none;
+  }
+}
+
+/* ---- Mobile ---- */
+
+@media (max-width: 480px) {
+  #root {
+    padding: 16px 8px;
+  }
+
+  .panel {
+    padding: 14px;
+  }
+
+  .room-code {
+    font-size: 1.2em;
+    padding: 6px 10px;
+  }
+
+  .card.hand-card {
+    width: 44px;
+    height: 44px;
+    font-size: 1.1em;
+  }
+
+  .hand {
+    gap: 6px;
+  }
+
+  .hand-actions {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .player-chip {
+    font-size: 0.75em;
+    padding: 4px 8px;
+  }
+
+  .screen-header h1 {
+    font-size: 1.3em;
+  }
 }

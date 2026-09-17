@@ -3,6 +3,7 @@ import { supportedPlayerCounts, teamOptionsFor } from '@rps/engine';
 import { request } from '../socket';
 import type { CreateRoomAck, JoinRoomAck } from '../protocol';
 import type { StoredSession } from '../session';
+import { Tutorial } from './Tutorial';
 
 const PLAYER_COUNTS = supportedPlayerCounts();
 
@@ -14,6 +15,7 @@ export function Home({ onEnter }: { onEnter: (session: StoredSession) => void })
   const [code, setCode] = useState('');
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
+  const [showTutorial, setShowTutorial] = useState(false);
 
   const teamOptions = teamOptionsFor(playerCount);
 
@@ -50,7 +52,13 @@ export function Home({ onEnter }: { onEnter: (session: StoredSession) => void })
 
   return (
     <div className="panel">
-      <h1>CrossWars</h1>
+      <div className="screen-header">
+        <h1>CrossWars</h1>
+        <button className="secondary" onClick={() => setShowTutorial(true)}>
+          How to play
+        </button>
+      </div>
+      {showTutorial && <Tutorial onClose={() => setShowTutorial(false)} />}
       <div className="tabs">
         <button className={tab === 'create' ? 'active' : ''} onClick={() => setTab('create')}>
           Create room
