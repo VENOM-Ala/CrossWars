@@ -12,6 +12,12 @@
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "dev", "--workspace=@rps/server"],
       "port": 3001
+    },
+    {
+      "name": "prod",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "start"],
+      "port": 3001
     }
   ]
 }
