@@ -3,7 +3,7 @@ import { applyMove, currentPlayer, randomMove } from '@rps/engine';
 import { TURN_TIMER_MS } from '../config';
 import type { RoomStore } from '../rooms/store';
 import type { Room } from '../rooms/types';
-import { broadcastGameViews } from './broadcast';
+import { broadcastGameViews, broadcastRoomState } from './broadcast';
 
 export function scheduleTurnTimer(io: Server, store: RoomStore, room: Room): void {
   if (room.turnTimeout) {
@@ -30,6 +30,7 @@ function onTurnTimeout(io: Server, store: RoomStore, room: Room): void {
 
   if (room.game.winner || room.game.endedBy) {
     room.phase = 'ended';
+    broadcastRoomState(io, room);
   }
 
   broadcastGameViews(io, room);

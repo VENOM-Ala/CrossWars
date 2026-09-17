@@ -27,6 +27,7 @@ export function registerGameHandlers(io: Server, store: RoomStore, socket: Socke
 
     if (room.game.winner || room.game.endedBy) {
       room.phase = 'ended';
+      broadcastRoomState(io, room);
     }
 
     ack({ ok: true });

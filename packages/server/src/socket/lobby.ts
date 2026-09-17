@@ -195,6 +195,7 @@ export function registerLobbyHandlers(io: Server, store: RoomStore, socket: Sock
     store.touch(room);
 
     ack({ ok: true });
+    broadcastRoomState(io, room);
     broadcastGameViews(io, room);
     scheduleTurnTimer(io, store, room);
   });

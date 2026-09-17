@@ -15,6 +15,8 @@ export function broadcastGameViews(io: Server, room: Room): void {
     io.to(seat.socketId).emit('game:view', {
       view: viewFor(game, seat.playerId),
       turnDeadline: room.turnDeadline,
+      roomCode: room.code,
+      hostPlayerId: room.hostPlayerId,
     });
   }
 }
