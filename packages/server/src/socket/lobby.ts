@@ -19,6 +19,18 @@ function findSeat(room: Room, playerId: string | undefined): Seat | undefined {
   return room.seats.find((s) => s.playerId === playerId);
 }
 
+/** Promotes another occupied seat to host, preferring one that's still connected. */
+function migrateHostAway(room: Room, leavingPlayerId: string): void {
+  const candidates = room.seats.filter((s) => s.playerId !== null && s.playerId !== leavingPlayerId);
+  const next = candidates.find((s) => s.connected) ?? candidates[0];
+  room.hostPlayerId = next?.playerId ?? null;
+}
+
+/** A seat reconnecting or joining claims host if the room currently has none. */
+function ensureHost(room: Room, seat: Seat): void {
+  if (room.hostPlayerId === null) room.hostPlayerId = seat.playerId;
+}
+
 function joinSocketToRoom(socket: Socket<any, any, any, SocketData>, room: Room, playerId: string): void {
   socket.data.playerId = playerId;
   socket.data.roomCode = room.code;
@@ -85,6 +97,7 @@ export function registerLobbyHandlers(io: Server, store: RoomStore, socket: Sock
       openSeat.socketId = socket.id;
       openSeat.sessionToken = token;
       store.registerSession(token, room.code, playerId);
+      ensureHost(room, openSeat);
       store.touch(room);
 
       joinSocketToRoom(socket, room, playerId);
@@ -114,15 +127,13 @@ export function registerLobbyHandlers(io: Server, store: RoomStore, socket: Sock
 
       seat.connected = true;
       seat.socketId = socket.id;
+      ensureHost(room, seat);
       store.touch(room);
       joinSocketToRoom(socket, room, session.playerId);
 
       ack({ ok: true, code: room.code, playerId: session.playerId, seat: seat.seat, phase: room.phase });
-      if (room.phase === 'lobby') {
-        broadcastRoomState(io, room);
-      } else if (room.game) {
-        broadcastGameViews(io, room);
-      }
+      broadcastRoomState(io, room);
+      if (room.game) broadcastGameViews(io, room);
     },
   );
 
@@ -207,7 +218,8 @@ export function registerLobbyHandlers(io: Server, store: RoomStore, socket: Sock
     if (!seat || seat.socketId !== socket.id) return;
     seat.connected = false;
     seat.socketId = null;
+    if (room.hostPlayerId === seat.playerId) migrateHostAway(room, seat.playerId!);
     store.touch(room);
-    if (room.phase === 'lobby') broadcastRoomState(io, room);
+    broadcastRoomState(io, room);
   });
 }

@@ -198,6 +198,33 @@ button.secondary {
   gap: 16px;
 }
 
+.players-bar {
+  width: 100%;
+  max-width: 640px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.player-chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  font-size: 0.85em;
+}
+
+.player-chip.current {
+  border-color: var(--accent);
+}
+
+.player-chip .muted {
+  color: var(--muted);
+}
+
 .turn-banner {
   width: 100%;
   max-width: 640px;

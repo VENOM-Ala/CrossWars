@@ -86,7 +86,9 @@ export function App() {
   } else if (game) {
     // A game:view is authoritative on its own - don't gate on room:state, which a
     // tab reconnecting straight into an in-progress game may never have received.
-    content = <Game game={game} isHost={game.hostPlayerId === session.playerId} roomCode={game.roomCode} />;
+    content = (
+      <Game game={game} room={room} isHost={game.hostPlayerId === session.playerId} roomCode={game.roomCode} />
+    );
   } else if (room && room.phase !== 'lobby') {
     content = <div className="panel">Loading game...</div>;
   } else if (room) {

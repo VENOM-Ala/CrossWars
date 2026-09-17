@@ -5,11 +5,13 @@ export function EndOverlay({
   endedBy,
   isHost,
   onRematch,
+  disabled,
 }: {
   winner: Team | null;
   endedBy: EndReason;
   isHost: boolean;
   onRematch: () => void;
+  disabled?: boolean;
 }) {
   return (
     <div className="overlay">
@@ -19,7 +21,9 @@ export function EndOverlay({
           {endedBy === 'rows' ? 'Four in a row.' : 'Nobody could make a move.'}
         </p>
         {isHost ? (
-          <button onClick={onRematch}>Rematch</button>
+          <button onClick={onRematch} disabled={disabled}>
+            Rematch
+          </button>
         ) : (
           <p style={{ color: 'var(--muted)' }}>Waiting for the host to start a rematch...</p>
         )}

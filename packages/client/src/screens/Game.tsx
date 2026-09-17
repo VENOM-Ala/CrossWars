@@ -1,24 +1,28 @@
 import { useState } from 'react';
 import type { Move } from '@rps/engine';
 import { request } from '../socket';
-import type { GameViewPayload, SimpleAck } from '../protocol';
+import type { GameViewPayload, RoomView, SimpleAck } from '../protocol';
 import { legalMovesFor } from '../game/legalMoves';
 import { Board } from '../game/Board';
 import { Hand } from '../game/Hand';
 import { TurnBanner } from '../game/TurnBanner';
 import { DrawPiles } from '../game/DrawPiles';
+import { PlayersBar } from '../game/PlayersBar';
 import { EndOverlay } from '../game/EndOverlay';
 
 export function Game({
   game,
+  room,
   isHost,
   roomCode,
 }: {
   game: GameViewPayload;
+  room: RoomView | null;
   isHost: boolean;
   roomCode: string;
 }) {
   const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
   const { view, turnDeadline } = game;
 
   const allLegal = legalMovesFor(view);
@@ -26,21 +30,29 @@ export function Game({
   const gameOver = Boolean(view.winner || view.endedBy);
 
   async function playMove(row: number, col: number) {
-    if (!selectedCardId) return;
+    if (!selectedCardId || submitting) return;
     const move: Move = { type: 'play', cardId: selectedCardId, row, col };
     setSelectedCardId(null);
+    setSubmitting(true);
     const ack = await request<Move, SimpleAck>('game:move', move);
+    setSubmitting(false);
     if (!ack.ok) console.error(ack.error);
   }
 
   async function reshuffle() {
+    if (submitting) return;
     const move: Move = { type: 'reshuffle' };
+    setSubmitting(true);
     const ack = await request<Move, SimpleAck>('game:move', move);
+    setSubmitting(false);
     if (!ack.ok) console.error(ack.error);
   }
 
   async function rematch() {
+    if (submitting) return;
+    setSubmitting(true);
     await request<Record<string, never>, SimpleAck>('game:rematch', {});
+    setSubmitting(false);
   }
 
   return (
@@ -48,6 +60,7 @@ export function Game({
       <div className="turn-banner" style={{ background: 'transparent', border: 'none', padding: 0 }}>
         Room {roomCode}
       </div>
+      <PlayersBar view={view} room={room} />
       <TurnBanner view={view} turnDeadline={turnDeadline} />
       <DrawPiles counts={view.drawPileCounts} />
       <Board board={view.board} legalMoves={legalForSelected} onPlay={playMove} />
@@ -57,7 +70,7 @@ export function Game({
         onSelect={(id) => setSelectedCardId(id === selectedCardId ? null : id)}
         showReshuffle={view.yourTurn && view.turnPhase === 'normal' && allLegal.length === 0}
         onReshuffle={reshuffle}
-        disabled={!view.yourTurn || gameOver}
+        disabled={!view.yourTurn || gameOver || submitting}
       />
       <div className="log">
         {view.log.slice(-20).map((entry, i) => (
@@ -70,6 +83,7 @@ export function Game({
           endedBy={view.endedBy!}
           isHost={isHost}
           onRematch={rematch}
+          disabled={submitting}
         />
       )}
     </div>
