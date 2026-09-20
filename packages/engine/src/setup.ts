@@ -15,9 +15,9 @@ interface CountRow {
 
 /** 5, 7 and 11 players are unsupported by design. */
 export const PLAYER_TABLE: Record<number, CountRow> = {
-  2: { size: 4, rowsToWin: 1, teamOptions: [2] },
-  3: { size: 4, rowsToWin: 1, teamOptions: [3] },
-  4: { size: 4, rowsToWin: 1, teamOptions: [2] },
+  2: { size: 6, rowsToWin: 1, teamOptions: [2] },
+  3: { size: 6, rowsToWin: 1, teamOptions: [3] },
+  4: { size: 6, rowsToWin: 1, teamOptions: [2] },
   6: { size: 6, rowsToWin: 1, teamOptions: [2, 3] },
   8: { size: 6, rowsToWin: 1, teamOptions: [2] },
   9: { size: 6, rowsToWin: 2, teamOptions: [3] },

@@ -33,7 +33,7 @@ export interface TeamState {
   removed: Card[];
 }
 
-export type BoardSize = 4 | 6 | 8;
+export type BoardSize = 6 | 8;
 
 export interface GameConfig {
   playerCount: number;

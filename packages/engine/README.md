@@ -30,8 +30,8 @@ list, which makes bug reports reproducible.
 ## Rules as encoded
 
 **Setup.** Supported player counts are 2, 3, 4, 6, 8, 9, 10, 12. Team count is
-fixed except at 6 and 12 players, where the host picks 2 or 3. Boards: 4×4 for
-2–4 players, 6×6 for 6–9, 8×8 for 10–12. Each team deck holds 10 each of rock,
+fixed except at 6 and 12 players, where the host picks 2 or 3. Boards: 6×6 for
+2–9 players, 8×8 for 10–12. Each team deck holds 10 each of rock,
 paper and scissors up to 6 players and 20 each above that, plus 3 wilds and 2
 bombs per player on that team. Seats alternate teams strictly in order.
 
@@ -74,9 +74,9 @@ From the current test run, 200 random games per configuration:
 
 | Players / teams | Decisive | Avg turns |
 | --- | --- | --- |
-| 2 / 2 | 98% | 23.6 |
-| 3 / 3 | 66% | 39.2 |
-| 4 / 2 | 97% | 25.6 |
+| 2 / 2 | 100% | 30.0 |
+| 3 / 3 | 100% | 44.0 |
+| 4 / 2 | 100% | 30.3 |
 | 6 / 2 | 100% | 31.2 |
 | 6 / 3 | 100% | 47.0 |
 | 8 / 2 | 100% | 30.4 |
@@ -85,6 +85,6 @@ From the current test run, 200 random games per configuration:
 | 12 / 3 | 100% | 84.9 |
 
 Random play is the worst case, so real games should be shorter and more
-decisive. The 3-player number is the one to watch: a third of those games ended
-in a draw because three teams on a 4×4 board burn through 35-card decks while
-constantly bombing each other.
+decisive. 9 players / 3 teams is now the least decisive configuration. The
+3-player case used to end in a draw a third of the time on a 4×4 board;
+raising the minimum board to 6×6 removed that.

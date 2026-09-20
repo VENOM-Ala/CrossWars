@@ -35,8 +35,8 @@ describe('no legal move', () => {
   /** Board where every space is locked, so nothing except a bomb is playable. */
   function lockedBoard() {
     const s = game(2, 2);
-    for (let r = 0; r < 4; r++) {
-      for (let c = 0; c < 4; c++) setSpace(s, r, c, [card('red', 'rock')], true);
+    for (let r = 0; r < s.config.size; r++) {
+      for (let c = 0; c < s.config.size; c++) setSpace(s, r, c, [card('red', 'rock')], true);
     }
     return s;
   }
@@ -60,8 +60,8 @@ describe('no legal move', () => {
 
   it('lets the player play after reshuffling when a move opens up', () => {
     const s = game(2, 2);
-    for (let r = 0; r < 4; r++) {
-      for (let c = 0; c < 4; c++) setSpace(s, r, c, [card('blue', 'rock')], true);
+    for (let r = 0; r < s.config.size; r++) {
+      for (let c = 0; c < s.config.size; c++) setSpace(s, r, c, [card('blue', 'rock')], true);
     }
     setHand(s, [card('red', 'rock'), card('red', 'paper'), card('red', 'scissors')]);
     s.teams.red!.drawPile = [card('red', 'trash'), card('red', 'trash'), card('red', 'rock')];
@@ -73,8 +73,8 @@ describe('no legal move', () => {
 
   it('refuses a second reshuffle in the same turn', () => {
     const s = game(2, 2);
-    for (let r = 0; r < 4; r++) {
-      for (let c = 0; c < 4; c++) setSpace(s, r, c, [card('blue', 'rock')], true);
+    for (let r = 0; r < s.config.size; r++) {
+      for (let c = 0; c < s.config.size; c++) setSpace(s, r, c, [card('blue', 'rock')], true);
     }
     setHand(s, [card('red', 'rock')]);
     s.teams.red!.drawPile = [card('red', 'trash')];

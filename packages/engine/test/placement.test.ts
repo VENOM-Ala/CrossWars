@@ -128,7 +128,7 @@ describe('move validation', () => {
   it('lists a legal move for every (card, space) pair it allows', () => {
     const s = game();
     setHand(s, [card('red', 'rock')]);
-    // 4x4 empty board -> 16 legal placements for a single card
-    expect(getLegalMoves(s, 'p0')).toHaveLength(16);
+    // 6x6 empty board -> 36 legal placements for a single card
+    expect(getLegalMoves(s, 'p0')).toHaveLength(36);
   });
 });

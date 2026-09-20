@@ -50,14 +50,12 @@ These came from the game's designer and should not be re-derived:
   One reshuffle per turn; if still stuck the turn passes.
 - Out of cards entirely: the player is skipped. Nobody can move: draw.
 - Two winning rows may share a card.
+- The smallest board is 6×6 (2–9 players); 8×8 for 10–12 players.
 
 ## Open questions for the designer
 
 1. A line of five currently counts as two winning rows, since rows are counted
    as overlapping windows of four. Confirm or switch to disjoint rows.
-2. Random-play simulation ends 3-player games in a draw about a third of the
-   time — three teams on a 4×4 board is the weakest configuration in the table.
-   May need a larger board or smaller decks at that count.
 
 ## Conventions
 

@@ -27,8 +27,8 @@ describe('legalMovesFor', () => {
     );
     const view = viewFor(state, 'a');
     const moves = legalMovesFor(view);
-    // Every non-trash card in hand may start any of the 16 empty spaces on a 4x4 board.
+    // Every non-trash card in hand may start any of the 36 empty spaces on a 6x6 board.
     const nonTrash = view.you.hand.filter((c) => c.kind !== 'trash').length;
-    expect(moves.length).toBe(nonTrash * 16);
+    expect(moves.length).toBe(nonTrash * 36);
   });
 });

@@ -65,9 +65,9 @@ describe('line detection', () => {
 });
 
 describe('board sizes and row targets', () => {
-  it('needs a full line on a 4x4 board', () => {
+  it('needs a full line on the smallest (6x6) board', () => {
     const s = game(2, 2);
-    expect(s.config.size).toBe(4);
+    expect(s.config.size).toBe(6);
     fillLine(s, [[0, 0], [0, 1], [0, 2]], 'red');
     expect(checkWin(s.board, 1)).toBeNull();
     fillLine(s, [[0, 3]], 'red');
@@ -100,7 +100,7 @@ describe('board sizes and row targets', () => {
 
   it('does not find lines that run off the edge of the board', () => {
     const s = game(2, 2);
-    fillLine(s, [[3, 1], [3, 2], [3, 3]], 'red');
+    fillLine(s, [[5, 3], [5, 4], [5, 5]], 'red');
     expect(findLines(s.board)).toHaveLength(0);
   });
 });
